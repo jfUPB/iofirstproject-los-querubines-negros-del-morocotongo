@@ -8,13 +8,9 @@ void task1()
     };
     static Task1States task1State = Task1States::INIT;
 
-    // Definición de variables static (conservan
-    // su valor entre llamadas a task1)
-    static uint32_t lasTime = 0;
+    static uint8_t lastbtn1State = HIGH;
+    static uint8_t lastbtn2State = HIGH;
 
-    // Constantes
-
-    constexpr uint32_t INTERVAL = 1000;
     constexpr uint8_t button1Pin = 12;
     constexpr uint8_t button2Pin = 13;
     constexpr uint8_t ledRed = 14;
@@ -35,7 +31,6 @@ void task1()
         pinMode(ledGreen, OUTPUT);
         pinMode(ledBlue, OUTPUT);
         pinMode(ledYellow, OUTPUT);
-        lasTime = millis();
         task1State = Task1States::WAIT_TIMEOUT;
 
         break;
@@ -45,29 +40,36 @@ void task1()
         uint8_t btn1State = digitalRead(button1Pin);
         uint8_t btn2State = digitalRead(button2Pin);
 
+        if ((btn1State != lastbtn1State) || (btn2State != lastbtn2State))
+        {
 
-        // Evento 2
-        if (btn1State == LOW && btn2State == LOW)
-            digitalWrite(ledRed, HIGH);
+            lastbtn1State = btn1State;
+            lastbtn2State = btn2State;
+
+            digitalWrite(ledRed, LOW);
             digitalWrite(ledGreen, LOW);
             digitalWrite(ledBlue, LOW);
             digitalWrite(ledYellow, LOW);
-        // Evento 3
-        if (btn1State == LOW && btn2State == HIGH)
-            digitalWrite(ledGreen, HIGH);
-            digitalWrite(ledRed, LOW);
-            digitalWrite(ledBlue, LOW);
-            digitalWrite(ledYellow, LOW);
-        if (btn1State == HIGH && btn2State == LOW)
-            digitalWrite(ledBlue, HIGH);
-            digitalWrite(ledGreen, LOW);
-            digitalWrite(ledRed, LOW);
-            digitalWrite(ledYellow, LOW);
-        if (btn1State == HIGH && btn2State == HIGH)
-            digitalWrite(ledYellow, HIGH);
-            digitalWrite(ledGreen, LOW);
-            digitalWrite(ledBlue, LOW);
-            digitalWrite(ledRed, LOW);
+
+            if (btn1State == LOW && btn2State == LOW)
+            {
+                digitalWrite(ledRed, HIGH);
+                Serial.print("Red on\n");
+            }
+
+            if (btn1State == LOW && btn2State == HIGH)
+                digitalWrite(ledGreen, HIGH);
+                Serial.print("Green on\n");
+
+            if (btn1State == HIGH && btn2State == LOW)
+                digitalWrite(ledBlue, HIGH);
+                Serial.print("Blue on\n");
+
+            if (btn1State == HIGH && btn2State == HIGH)
+                digitalWrite(ledYellow, HIGH);
+                Serial.print("Yellow on\n");
+        }
+
         break;
     }
     default:
